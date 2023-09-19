@@ -13,7 +13,7 @@ echo -n "Enter hostname "
 read hostname
 
 #очитска mnt
-umount -l /mnt
+umount -R /mnt
 rm -rf /mnt/*
 #Создание разделов sdaumount -l /mnt
 (echo o; sleep 1; echo  w) | fdisk /dev/sda
@@ -48,6 +48,10 @@ arch-chroot /mnt /bin/bash -c "echo 'export username=$username' >> /etc/bash.bas
 
 arch-chroot /mnt /bin/bash -c "sed -i s/'# %wheel ALL=(ALL:ALL) ALL'/'%wheel ALL=(ALL:ALL) ALL'/g /etc/sudoers"
 arch-chroot /mnt /bin/bash -c "echo '%wheel ALL=(ALL) NOPASSWD: /usr/bin/pacman'>>/etc/sudoers"
+arch-chroot /mnt /bin/bash -c "echo 'deny = 10' >>/etc/security/faillock.conf"
+arch-chroot /mnt /bin/bash -c "echo 'unlock_time = 60' >>/etc/security/faillock.conf"
+
+
 
 arch-chroot /mnt /bin/bash -c "sed -i s/'#Color'/'Color'/g /etc/pacman.conf"
 arch-chroot /mnt /bin/bash -c "sed -i s/'#en_US.UTF-8'/'en_US.UTF-8'/g /etc/locale.gen"
@@ -72,6 +76,7 @@ arch-chroot /mnt /bin/bash -c "hwclock --systohc"
 arch-chroot /mnt /bin/bash -c "reflector --verbose -l 5 -p https --sort rate --save /etc/pacman.d/mirrorlist"
 
 arch-chroot /mnt /bin/bash -c "mkinitcpio -p linux"
+arch-chroot /mnt /bin/bash -c "pacman-key --init pacman-key --populate archlinux"
 arch-chroot /mnt /bin/bash -c "pacman -Syu"
 arch-chroot /mnt /bin/bash -c "pacman -S $pacman_list --noconfirm"
 
@@ -96,4 +101,14 @@ sed -i '$d' /mnt/etc/sudoers
 rm -rf /mnt/home/$username/sh
 rm -rf /mnt/home/$username/yay
 
+#create snapshot
+arch-chroot /mnt /bin/bash -c "sudo btrfs subvolume snapshot / /.snapshots/start"
 
+#install grub-btrfs
+
+arch-chroot /mnt /bin/bash -c "pacman -S grub-btrfs inotify-tools --noconfirm"
+arch-chroot /mnt /bin/bash -c "sudo systemctl start grub-btrfsd"
+arch-chroot /mnt /bin/bash -c "sudo systemctl enable grub-btrfsd"
+arch-chroot /mnt /bin/bash -c "grub-mkconfig -o /boot/grub/grub.cfg"
+
+#i3wm
