@@ -1,1 +1,1 @@
-intel-ucode grub efibootmgr ntfs-3g os-prober btrfs-progs vim dhcpcd net-tools networkmanager alsa-utils nvidia nvidia-settings xorg-server xorg-xinit mc htop bash-completion tmux mc openssh git neofetch tree pulseaudio pavucontrol 
+intel-ucode grub efibootmgr ntfs-3g os-prober btrfs-progs vim dhcpcd net-tools networkmanager alsa-utils nvidia nvidia-settings xorg-server xorg-xinit mc htop bash-completion tmux mc openssh git neofetch tree pulseaudio pavucontrol dosfstools 

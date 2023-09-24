@@ -3,6 +3,8 @@ BASEDIR=$(dirname $(realpath "$0"))
 pacman_list=$(cat pacman_list.txt)
 binmod="setfont"
 
+echo -n "Enter disk name"
+read diskname
 echo -n "Enter root password: "
 read root_password
 echo -n "Enter user name: "
@@ -15,27 +17,27 @@ read hostname
 #очитска mnt
 umount -R /mnt
 rm -rf /mnt/*
-#Создание разделов sdaumount -l /mnt
-(echo o; sleep 1; echo  w) | fdisk /dev/sda
-(echo n; echo p; echo 1; echo ''; echo +1024M; sleep 1; echo w) | fdisk /dev/sda
-(echo n; echo p; echo 2; echo ''; echo ''; sleep 1; echo w) | fdisk /dev/sda
-(echo a; echo  1; sleep 1; echo w) | fdisk /dev/sdaa
+#Создание разделов ${diskname}umount -l /mnt
+(echo o; sleep 1; echo  w) | fdisk /dev/${diskname}
+(echo n; echo p; echo 1; echo ''; echo +1024M; sleep 1; echo w) | fdisk /dev/${diskname}
+(echo n; echo p; echo 2; echo ''; echo ''; sleep 1; echo w) | fdisk /dev/${diskname}
+(echo a; echo  1; sleep 1; echo w) | fdisk /dev/${diskname}
 #Форматирование дисков'
-mkfs.vfat -F32 /dev/sda1
-mkfs.btrfs -f -L 'root' /dev/sda2
+mkfs.vfat -F32 /dev/${diskname}1
+mkfs.btrfs -f -L 'root' /dev/${diskname}2
 
 #Монтирование btrfs,boot
-mount /dev/sda2 /mnt
+mount /dev/${diskname}2 /mnt
 btrfs su cr /mnt/@
 btrfs su cr /mnt/@home
 btrfs su cr /mnt/@snapshots
 umount /mnt
-mount -o rw,noatime,compress=lzo,space_cache=v2,discard=async,ssd,subvol=@ /dev/sda2 /mnt
+mount -o rw,noatime,compress=lzo,space_cache=v2,discard=async,ssd,subvol=@ /dev/${diskname}2 /mnt
 mkdir -p /mnt/{home,.snapshots}
-mount -o rw,noatime,compress=lzo,space_cache=v2,discard=async,ssd,subvol=@home /dev/sda2 /mnt/home
-mount -o rw,noatime,compress=lzo,space_cache=v2,discard=async,subvol=@snapshots  /dev/sda2 /mnt/.snapshots
+mount -o rw,noatime,compress=lzo,space_cache=v2,discard=async,ssd,subvol=@home /dev/${diskname}2 /mnt/home
+mount -o rw,noatime,compress=lzo,space_cache=v2,discard=async,subvol=@snapshots  /dev/${diskname}2 /mnt/.snapshots
 mkdir -p /mnt/boot/efi
-mount /dev/sda1 /mnt/boot/efi
+mount /dev/${diskname}1 /mnt/boot/efi
 
 # Установка 
 sed -i s/'#ParallelDownloads = 5'/'ParallelDownloads = 13'/g /etc/pacman.conf
