@@ -1,4 +1,19 @@
-nvidia
-nvidia-utils
-nvidia-settings
-lib32-nvidia-utils  # для 32-битных приложений
+i3
+i3status
+i3blocks
+i3lock
+xorg-server
+xorg-xinit
+xorg-twm
+xterm
+rofi
+lxappearance
+dmenu
+feh
+light
+xbacklight
+dunst
+pulseaudio
+pulseaudio-alsa
+xorg-xrdb
+picom

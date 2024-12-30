@@ -13,7 +13,7 @@ default_user_password="userpass"
 default_hostname="archlinux"
 default_cpu_type="intel"
 default_gpu_type="nvidia"
-default_wm_type="i3wm"
+default_wm_type="hyperland"
 
 # Пользовательский ввод
 echo "Do you want to use default values? (y/n)"
@@ -132,7 +132,11 @@ fi
 
 # Установка пакетов для выбранного графического окружения
 if [ "$wm_type" != "none" ]; then
-  pacstrap -i /mnt $(cat $BASEDIR/pacman_lists/pacman_list_$wm_type.txt) --noconfirm
+  if [ "$wm_type" == "hyperland" ]; then
+    skip_hyperland=true
+  else
+    pacstrap -i /mnt $(cat $BASEDIR/pacman_lists/pacman_list_$wm_type.txt) --noconfirm
+  fi
 fi
 
 # Генерация fstab
@@ -165,3 +169,14 @@ arch-chroot /mnt /bin/bash -c "grub-mkconfig -o /boot/grub/grub.cfg"
 
 # Включение NetworkManager
 arch-chroot /mnt /bin/bash -c "systemctl enable NetworkManager"
+
+# Установка yay
+arch-chroot /mnt /bin/bash -c "sudo -u $username bash -c 'cd /home/$username && git clone https://aur.archlinux.org/yay.git && cd yay && makepkg -si --noconfirm'"
+
+# Установка Hyperland после yay
+if [ "$wm_type" == "hyperland" ]; then
+  arch-chroot /mnt /bin/bash -c "sudo -u $username yay -S --noconfirm hyperland"
+fi
+
+# Завершение установки
+echo "Installation completed successfully!"
