@@ -1,0 +1,14 @@
+hyperland
+hyperland-wayland
+wayland-protocols
+wayland-utils
+xorg-xwayland
+swaybg
+swaylock
+swaybar
+wtype
+pipewire
+pipewire-pulse
+xdg-desktop-portal
+xdg-desktop-portal-wlr
+xorg-server-xwayland

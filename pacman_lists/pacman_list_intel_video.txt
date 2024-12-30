@@ -1,0 +1,3 @@
+xf86-video-intel
+mesa
+lib32-mesa  # для 32-битных приложений
